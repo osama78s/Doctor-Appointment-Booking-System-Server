@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Mail;
 class ContactController extends Controller
 {
     use ApiTrait;
+
     public function store(StoreRequest $request){
         $user = Auth::user();
         $admin = User::where('role', 'admin')->where('email', 'osamasaif242@gmail.com')->first();
@@ -27,4 +28,5 @@ class ContactController extends Controller
         ));
         return $this->successMessage('Send Mail Successfully');
     }
+    
 }

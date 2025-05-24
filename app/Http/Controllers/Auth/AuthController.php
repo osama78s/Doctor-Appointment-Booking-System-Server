@@ -109,7 +109,6 @@ class AuthController extends Controller
     {
         return Socialite::driver('google')
         ->with(['prompt' => 'select_account'])
-        // دي معناها ان انا مش هستخدم session 
         ->stateless()
         ->redirect();
     }
@@ -117,13 +116,15 @@ class AuthController extends Controller
     public function handleGoogleCallback(Request $request)
     {
             $googleUser = Socialite::driver('google')->stateless()->user();
-            $user = User::where('email', $googleUser->getEmail())->first();
+            $user = User::where('email', $googleUser->getEmail())
+            ->orwhere('google_id', $googleUser->id)->first();
 
             if (!$user) {
                 $user = User::create([
                     'first_name' => explode(' ', $googleUser->getName())[0] ?? 'User',
                     'last_name' => explode(' ', $googleUser->getName())[1] ?? 'Google',
                     'email' => $googleUser->getEmail(),
+                    'google_id' => $googleUser->id,
                     'password' => Hash::make(Str::random(8)),
                     'email_verified_at' => now(),
                     'image' => 'default.jpg',
